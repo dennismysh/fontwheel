@@ -6,12 +6,14 @@ import { useSpin } from "../lib/useSpin";
 import { loadFonts } from "../lib/loadFont";
 import { WheelSVG } from "./WheelSVG";
 import { Pointer } from "./Pointer";
+import type { Theme } from "../lib/useTheme";
 
 type Orientation = "right" | "bottom";
 
 type Props = {
   pool: FontEntry[];
   orientation: Orientation;
+  theme: Theme;
   onLand: (winner: FontEntry) => void;
 };
 
@@ -27,7 +29,7 @@ function sample(pool: FontEntry[], n: number): FontEntry[] {
   return arr.slice(0, n);
 }
 
-export function WheelStage({ pool, orientation, onLand }: Props) {
+export function WheelStage({ pool, orientation, theme, onLand }: Props) {
   const [segments, setSegments] = useState<FontEntry[]>([]);
   const [mounted, setMounted] = useState(false);
   const { rotation, spinning, landedIndex, spin } = useSpin(segments.length);
@@ -131,7 +133,7 @@ export function WheelStage({ pool, orientation, onLand }: Props) {
       {mounted && segments.length > 0 && (
         <div style={containerStyle} className="wheel-mount">
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-            <WheelSVG size={diameter} fonts={segments} rotation={rotation} />
+            <WheelSVG size={diameter} fonts={segments} rotation={rotation} theme={theme} />
             <Pointer side={pointerSide} size={diameter} />
           </div>
         </div>

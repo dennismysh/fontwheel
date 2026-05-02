@@ -28,9 +28,22 @@ export const metadata: Metadata = {
   description: "Spin a wheel, land on a Google Font, see how it reads.",
 };
 
+const THEME_INIT = `
+try {
+  var t = localStorage.getItem('fontwheel.theme.v1');
+  if (t !== 'colorful') t = 'bw';
+  document.documentElement.setAttribute('data-theme', t);
+} catch (_) {
+  document.documentElement.setAttribute('data-theme', 'bw');
+}
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${caveat.variable} ${patrickHand.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body>{children}</body>
     </html>
   );

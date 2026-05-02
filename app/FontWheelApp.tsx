@@ -10,6 +10,7 @@ import { DEFAULT_FILTERS, filterFonts, type FilterState } from "./lib/filterFont
 import { loadFont } from "./lib/loadFont";
 import { useFontParam } from "./lib/useFontParam";
 import { useIsMobile } from "./lib/useIsMobile";
+import { useTheme } from "./lib/useTheme";
 
 const STORAGE_KEY = "fontwheel.filters.v1";
 const FALLBACK_FAMILY = "Inter";
@@ -20,6 +21,7 @@ export function FontWheelApp() {
   const [filtersHydrated, setFiltersHydrated] = useState(false);
   const [lastWinner, setLastWinner] = useState<FontEntry | null>(null);
   const isMobile = useIsMobile(760);
+  const [theme, setTheme] = useTheme();
 
   useEffect(() => {
     try {
@@ -82,10 +84,10 @@ export function FontWheelApp() {
   if (isMobile) {
     return (
       <main className="app app--mobile">
-        <Header />
+        <Header theme={theme} onThemeChange={setTheme} />
         <div className="wheel-zone wheel-zone--mobile">
           <div className="wheel-zone__corner">font wheel</div>
-          <WheelStage pool={pool} orientation="bottom" onLand={handleLand} />
+          <WheelStage pool={pool} orientation="bottom" theme={theme} onLand={handleLand} />
         </div>
         <div className="content-stack">
           {filterBar}
@@ -97,7 +99,7 @@ export function FontWheelApp() {
 
   return (
     <main className="app app--desktop">
-      <Header />
+      <Header theme={theme} onThemeChange={setTheme} />
       <div className="stage">
         <div className="content-col">
           {filterBar}
@@ -105,7 +107,7 @@ export function FontWheelApp() {
         </div>
         <div className="wheel-zone wheel-zone--desktop">
           <div className="wheel-zone__corner">wheel</div>
-          <WheelStage pool={pool} orientation="right" onLand={handleLand} />
+          <WheelStage pool={pool} orientation="right" theme={theme} onLand={handleLand} />
         </div>
       </div>
     </main>

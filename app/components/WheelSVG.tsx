@@ -2,16 +2,38 @@
 
 import { useMemo } from "react";
 import type { FontEntry } from "../data/fonts";
+import type { Theme } from "../lib/useTheme";
 
 const BW_PALETTE = ["#1c1c1e", "#2a2a2d", "#1c1c1e", "#333336"];
+const COLORFUL_PALETTE = [
+  "#F4C04E",
+  "#E85A6B",
+  "#3FB89E",
+  "#5C6FE0",
+  "#E97A4F",
+  "#9C7AD9",
+  "#F4C04E",
+  "#3FB89E",
+  "#E85A6B",
+  "#5C6FE0",
+  "#E97A4F",
+  "#9C7AD9",
+];
 
 type Props = {
   size: number;
   fonts: FontEntry[];
   rotation: number;
+  theme: Theme;
 };
 
-export function WheelSVG({ size, fonts, rotation }: Props) {
+export function WheelSVG({ size, fonts, rotation, theme }: Props) {
+  const colorful = theme === "colorful";
+  const palette = colorful ? COLORFUL_PALETTE : BW_PALETTE;
+  const sliceStroke = colorful ? "rgba(0,0,0,0.08)" : "#0a0a0b";
+  const sliceStrokeWidth = colorful ? 0.5 : 1;
+  const rimStroke = colorful ? "#1a1a1a" : "#000";
+  const labelColor = colorful ? "#1a1a1a" : "#e8e8ea";
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2 - 2;
@@ -29,16 +51,15 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
       const x2 = cx + r * Math.cos(endRad);
       const y2 = cy + r * Math.sin(endRad);
       const largeArc = sliceAngle > 180 ? 1 : 0;
-      const fill = BW_PALETTE[i % BW_PALETTE.length];
+      const fill = palette[i % palette.length];
       return {
         key: `${font.family}-${i}`,
         d: `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`,
         fill,
       };
     });
-  }, [fonts, sliceAngle, cx, cy, r]);
+  }, [fonts, sliceAngle, cx, cy, r, palette]);
 
-  const textColor = "#e8e8ea";
   const textR = r * 0.78;
   const fontSize = Math.max(11, size / 42);
 
@@ -63,7 +84,16 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
     };
   });
 
-  const gradientId = "wheel-grad-bw";
+  const gradientId = `wheel-grad-${theme}`;
+  const overlayStops = colorful
+    ? {
+        inner: "rgba(255,255,255,0.18)",
+        outer: "rgba(0,0,0,0.18)",
+      }
+    : {
+        inner: "rgba(255,255,255,0.06)",
+        outer: "rgba(0,0,0,0.35)",
+      };
 
   return (
     <svg
@@ -74,9 +104,9 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
     >
       <defs>
         <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.06)" />
+          <stop offset="0%" stopColor={overlayStops.inner} />
           <stop offset="70%" stopColor="rgba(0,0,0,0)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
+          <stop offset="100%" stopColor={overlayStops.outer} />
         </radialGradient>
         <radialGradient id="hub-grad" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#3a3a3d" />
@@ -84,7 +114,7 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
         </radialGradient>
       </defs>
 
-      <circle cx={cx} cy={cy} r={r + 1} fill="none" stroke="#000" strokeWidth={3} />
+      <circle cx={cx} cy={cy} r={r + 1} fill="none" stroke={rimStroke} strokeWidth={3} />
 
       <g
         style={{
@@ -94,7 +124,13 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
         }}
       >
         {paths.map((p) => (
-          <path key={p.key} d={p.d} fill={p.fill} stroke="#0a0a0b" strokeWidth={1} />
+          <path
+            key={p.key}
+            d={p.d}
+            fill={p.fill}
+            stroke={sliceStroke}
+            strokeWidth={sliceStrokeWidth}
+          />
         ))}
         <circle cx={cx} cy={cy} r={r} fill={`url(#${gradientId})`} pointerEvents="none" />
       </g>
@@ -104,7 +140,7 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
           key={l.key}
           x={l.tx}
           y={l.ty}
-          fill={textColor}
+          fill={labelColor}
           fontSize={fontSize}
           fontFamily={`"${l.family}", system-ui, sans-serif`}
           fontWeight={500}
@@ -122,7 +158,7 @@ export function WheelSVG({ size, fonts, rotation }: Props) {
         cy={cy}
         r={size * 0.09}
         fill="url(#hub-grad)"
-        stroke="#000"
+        stroke={rimStroke}
         strokeWidth={1.5}
       />
       <circle cx={cx} cy={cy} r={size * 0.04} fill="#1a1a1a" stroke="#444" strokeWidth={0.5} />

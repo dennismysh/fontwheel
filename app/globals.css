@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="bw"] {
   --bg: #0a0a0b;
   --bg-zone: #0e0e10;
   --surface: #16161a;
@@ -13,6 +14,16 @@
   --ui: var(--font-ui), "Inter", ui-sans-serif, system-ui, sans-serif;
   --sketch: var(--font-sketch), "Caveat", var(--font-sketch-fallback),
     "Patrick Hand", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="colorful"] {
+  --bg: #fdfaf2;
+  --bg-zone: #faf6ea;
+  --surface: #ffffff;
+  --chip: #f1ede0;
+  --fg: #1a1a1a;
+  --mute: rgba(0, 0, 0, 0.55);
+  --border-dashed: 1.5px dashed rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -104,10 +115,42 @@ textarea {
   color: var(--fg);
 }
 
+.hdr__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .hdr__tagline {
   font-family: var(--sketch);
   font-size: 14px;
   color: var(--mute);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  border: var(--border-dashed);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+  background: var(--surface);
+}
+
+.theme-toggle__opt {
+  font-family: var(--sketch);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--mute);
+  line-height: 1.2;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-toggle__opt[aria-pressed="true"] {
+  background: var(--fg);
+  color: var(--bg);
 }
 
 /* ── Desktop layout ────────────────────────────────────── */
