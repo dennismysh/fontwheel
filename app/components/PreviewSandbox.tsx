@@ -26,7 +26,7 @@ export function PreviewSandbox({ fontFamily }: Props) {
         aria-label="Editable preview text"
       />
       <div
-        className="render"
+        className="sandbox__render"
         style={{ fontFamily: `"${fontFamily}", system-ui, sans-serif` }}
       >
         {text}
